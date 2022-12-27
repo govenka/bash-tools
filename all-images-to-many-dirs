@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Définition du répertoire cible où les images seront déplacées
+target_dir="/chemin/vers/le/répertoire/cible"
+
+# Définition du compteur qui servira à découper les images en sous-répertoires de 200 images
+counter=0
+
+# On parcours tous les sous-répertoires du répertoire courant
+for dir in */ ; do
+  # On entre dans chaque sous-répertoire
+  cd "$dir"
+
+  # On parcours tous les fichiers du sous-répertoire courant
+  for file in * ; do
+    # On vérifie si le fichier est une image en vérifiant si son nom se termine par l'une des extensions d'image suivantes
+    if [[ "$file" == *.jpg || "$file" == *.jpeg || "$file" == *.png || "$file" == *.gif ]] ; then
+      # Si c'est une image, on incrémente le compteur
+      counter=$((counter+1))
+
+      # Si le compteur atteint 200, on crée un nouveau sous-répertoire dans le répertoire cible et on réinitialise le compteur
+      if [ "$counter" -eq 200 ] ; then
+        counter=0
+        subdir=$((subdir+1))
+        mkdir "${target_dir}/${subdir}"
+      fi
+
+      # On déplace l'image dans le répertoire cible
+      mv "$file" "${target_dir}/${subdir}"
+    fi
+  done
+
+  # On revient au répertoire parent
+  cd ..
+done
